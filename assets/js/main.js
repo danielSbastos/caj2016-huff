@@ -17,15 +17,15 @@ var clickedIndex;
 
 function initMap() {
     var options = {
-      center: new google.maps.LatLng(-23.5276039, -46.7406564),
-      zoom: 5,
-      styles: mapStyle,
-      mapTypeControl: false,
-      streetViewControl: false
+        center: new google.maps.LatLng(-23.5276039, -46.7406564),
+        zoom: 5,
+        styles: mapStyle,
+        mapTypeControl: false,
+        streetViewControl: false
     };
     map = new google.maps.Map(document.getElementById("map"), options);
     google.maps.event.addListener(map,'tilesloaded',function(){
-        if(!mapLoaded){
+        if(!mapLoaded) {
             $('#btStart').delay(200).fadeIn(400);
             $('#preloader').fadeOut(200);
             mapLoaded=true;
@@ -34,10 +34,9 @@ function initMap() {
 }
 
 function addMarkers(){
-
     var i = markerNum;
 
-    if(markerNum >= mapData.length){ 
+    if (markerNum >= mapData.length) {
         clearInterval(markerInterval);
         return;
     }
@@ -51,13 +50,13 @@ function addMarkers(){
         title: mapData[i].tipo
     });
 
-    if(selectedTypes.indexOf(mapData[i].tipo) > -1){
+    if (selectedTypes.indexOf(mapData[i].tipo) > -1) {
         newMarker.setVisible(true);
-    }else{
+    } else {
         newMarker.setVisible(false);
     }
 
-    if(!markersByType[mapData[i].tipo]){
+    if (!markersByType[mapData[i].tipo]) {
         markersByType[mapData[i].tipo] = [];
     }
     markersByType[mapData[i].tipo].push(newMarker);
@@ -73,100 +72,95 @@ function addMarkers(){
         map.setZoom(11);
         map.setCenter(newMarker.getPosition());
     });
-
-    
-    //}
 }
 
-function loadData(){
-    d3.tsv('assets/data/mapdata.tsv', function(data){
-        //console.log(data);
+function loadData() {
+    d3.tsv('assets/data/mapdata.tsv', function(data) {
         mapData = data;
         initMap();
     });
 }
 
-function animateLogo(){
-    
-    if(inHome){
-        $('#logobg').css({fill: colors[currColor], transition: "2.0s"});
-        logoAnimTimeout = setTimeout(animateLogo, 2200);       
-    }else{
+function animateLogo() {
+    if (inHome) {
+        $('#logobg').css({ fill: colors[currColor], transition: "2.0s" });
+        logoAnimTimeout = setTimeout(animateLogo, 2200);
+    } else {
         clearTimeout(logoAnimTimeout);
-        $('#logobg').css({fill: colors[colors.length-1], transition: "0.2s"});
+        $('#logobg').css({ fill: colors[colors.length-1], transition: "0.2s" });
     }
 
     currColor++;
-    if(currColor > colors.length-1){ currColor = 0 }
+    if (currColor > colors.length-1) { currColor = 0 }
 }
 
 function legendaClick(event){
     event.preventDefault();
-    
+
     var markerList;
     var type = $(this).find('span').html();
     var typeIndex = selectedTypes.indexOf(type);
 
-    //console.log(type);
     markerList = markersByType[type];
 
-    if(typeIndex == -1){
+    if (typeIndex == -1) {
         selectedTypes.push(type);
         $(this).addClass('selected');
 
-        for(var i=0; i<markerList.length;i++){
+        for (var i=0; i<markerList.length; i++) {
             markerList[i].setVisible(true);
         }
-    }else{
+
+    } else {
         selectedTypes.splice(typeIndex,1);
         $(this).removeClass('selected');
 
-        for(var i=0; i<markerList.length;i++){
+        for (var i=0; i<markerList.length; i++) {
             markerList[i].setVisible(false);
         }
     }
 }
 
-function showInfo(){
+function showInfo() {
     var selectedData = mapData[clickedIndex];
     var quem = '';
 
     $('#details h4').html(selectedData.tipo);
-    $('#details p.where').html("<b>Onde:</b> "+selectedData.cidade.toUpperCase());
-    $('#details p.violence').html("<b>O que:</b> "+selectedData.forma.toUpperCase());
+    $('#details p.where').html("<b>Onde:</b> " + selectedData.cidade.toUpperCase());
+    $('#details p.violence').html("<b>O que:</b> " + selectedData.forma.toUpperCase());
 
-    $('#details p.when').html("<b>Quando:</b> "+selectedData.data_ocorrencia.toUpperCase());
-    $('#details p.description').html("<b>Relato:</b><br/>&quot;"+selectedData.descricao+"&quot;");
+    $('#details p.when').html("<b>Quando:</b> " + selectedData.data_ocorrencia.toUpperCase());
+    $('#details p.description').html("<b>Relato:</b><br/>&quot;" + selectedData.descricao + "&quot;");
 
-    if(selectedData.homofobia_quem != ''){
+    if (selectedData.homofobia_quem != '') {
         quem = selectedData.homofobia_quem;
-    }else if(selectedData.lesbofobia_quem != ''){
+    } else if (selectedData.lesbofobia_quem != '') {
         quem = selectedData.lesbofobia_quem;
-    }else if(selectedData.transfobia_quem != ''){
+    } else if (selectedData.transfobia_quem != '') {
         quem = selectedData.transfobia_quem;
     }
 
-    if(quem != '' && quem != undefined){
+    if (quem != '' && quem != undefined) {
         $('#details p.who').html( "<b>Contra quem:</b> " + quem );
         $('#details p.who').show();
-    }else{
+    } else {
         $('#details p.who').hide();
     }
 
     $('#details').addClass('open');
 }
 
-function initForm(){
-    $('#formBt').bind('click', function(){
+function initForm() {
+    $('#formBt').bind('click', function() {
         $('#formLayer').fadeIn(400);
     });
 
-    $('#btFormClose').bind('click', function(){
+    $('#btFormClose').bind('click', function() {
         $('#formLayer').fadeOut(400);
     });
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
     markersByType = {};
     markers = [];
 
@@ -174,34 +168,32 @@ $(document).ready(function(){
     logoAnimTimeout = setTimeout(animateLogo, 2200);
     loadData();
 
-        // botao Entrar
-    $('#btStart').bind('click', function(event){
+    // botao Entrar
+    $('#btStart').bind('click', function(event) {
         event.preventDefault();
 
-        $('header').animate({top: '-200px'}, 500);
-        $('header').fadeOut(500, function(){
+        $('header').animate({ top: '-200px' }, 500);
+        $('header').fadeOut(500, function() {
             $('#btStart').hide();
             $('header').addClass('onTop');
-            $('header').css({top: '30px'});
+            $('header').css({ top: '30px' });
             $('header').fadeIn(100);
         });
         inHome = false;
-        $('.mapBox').delay(300).fadeIn(500, function(){
+        $('.mapBox').delay(300).fadeIn(500, function() {
             markerInterval = setInterval(addMarkers, 20);
         });
     });
 
-    $('#details .backBt').bind('click', function(event){
+    $('#details .backBt').bind('click', function(event) {
         event.preventDefault();
-       $('#details').removeClass('open');
-       map.setZoom(5);
+        $('#details').removeClass('open');
+        map.setZoom(5);
     });
 
     // seleção de marcadores visíveis
     $('#legenda li').bind('click', legendaClick);
-
     initForm();
-
 });
 
 
